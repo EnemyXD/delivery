@@ -1,0 +1,15 @@
+.NavBarMain {
+  border-right-style: solid;
+  border-top-style: solid;
+}
+
+.item {
+  color: rgb(167, 194, 129);
+  font-size: large;
+  text-decoration: none;
+  margin: 2rem;
+}
+
+.item_active {
+  color: rgb(105, 135, 62);
+}

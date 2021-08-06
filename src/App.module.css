@@ -1,0 +1,23 @@
+.MainDiv {
+  display: grid;
+  grid-template-rows: 2fr 10fr;
+  background-color: lightgreen;
+}
+
+.Header {
+  padding: 10px;
+}
+
+.AllContent {
+  display: grid;
+  grid-template-columns: 2fr 10fr;
+  background-color: khaki;
+}
+
+.NavBar {
+  padding: 10px;
+}
+
+.Content {
+  padding: 10px;
+}
