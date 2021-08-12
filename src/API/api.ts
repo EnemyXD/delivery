@@ -8,6 +8,7 @@ export enum ResultCodeEnum {
 export type BaseResponseType<D = {}> = {
   resultCode: ResultCodeEnum;
   d: D;
+  message: String;
 };
 
 export const instance = axios.create({

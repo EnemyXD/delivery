@@ -2,40 +2,24 @@ import React from "react";
 import { AppStateType, ThunkType } from "../../redux/redux-store";
 import { LoginForm } from "./LoginForm";
 import { loginThunk } from "../../redux/profile-Reducer";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { profileActionType } from "../../redux/profile-Reducer";
 import { Redirect } from "react-router";
+import { getAuth } from "../../redux/selectors";
 
-type OwnPropsType = {};
-type MapStatePropsType = {
-  auth: boolean;
-};
-type MapDispatchPropsType = {
-  loginThunk: (login: string, pass: string) => any;
-};
-
-type propsType = MapStatePropsType & MapDispatchPropsType;
+type propsType = {};
 
 const Login: React.FC<propsType> = (props) => {
-  if (props.auth) {
+  const auth = useSelector(getAuth);
+
+  if (auth) {
     return <Redirect to="/" />;
   }
   return (
     <div>
       <h1>Authorization</h1>
-      <LoginForm loginThunk={props.loginThunk}></LoginForm>
+      <LoginForm></LoginForm>
     </div>
   );
 };
-
-const mapStateToProps = (state: AppStateType): MapStatePropsType => {
-  return {
-    auth: state.profilePage.auth,
-  };
-};
-export default connect<
-  MapStatePropsType,
-  MapDispatchPropsType,
-  OwnPropsType,
-  AppStateType
->(mapStateToProps, { loginThunk })(Login);
+export default Login;
