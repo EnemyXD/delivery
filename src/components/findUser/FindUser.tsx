@@ -1,9 +1,17 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { NavLink, useHistory } from "react-router-dom";
+import { getAuth } from "../../redux/selectors";
 
 type propsType = {};
 
 export const FindUser: React.FC<propsType> = (props) => {
+  const auth = useSelector(getAuth);
+  const history = useHistory();
+
+  if (!auth) {
+    history.push("/login");
+  }
   return (
     <div>
       <div>

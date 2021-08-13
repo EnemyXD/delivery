@@ -1,7 +1,7 @@
 import { Field, Form, Formik } from "formik";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router";
+import { Redirect, useHistory } from "react-router";
 import {
   findUserByEmail,
   findUserByName,
@@ -19,8 +19,14 @@ type onSumbitType = (
 ) => void;
 
 export const FindByName: React.FC<propsType> = React.memo((props) => {
-  const user: user[] | null = useSelector(getFindByName);
   const auth = useSelector(getAuth);
+  const history = useHistory();
+
+  if (!auth) {
+    history.push("/login");
+  }
+
+  const user: user[] | null = useSelector(getFindByName);
 
   const dispatch = useDispatch();
   const initialValues = {
@@ -31,10 +37,6 @@ export const FindByName: React.FC<propsType> = React.memo((props) => {
     onSubmitProps.setSubmitting(true);
     dispatch(findUserByName(values.email, onSubmitProps));
   };
-
-  if (!auth) {
-    return <Redirect to="/login" />;
-  }
   console.log("findByName");
   console.log(user);
 

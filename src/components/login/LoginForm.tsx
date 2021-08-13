@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import textError from "../../common/textError";
 import { loginThunk } from "../../redux/profile-Reducer";
+import * as Yup from "yup";
 
 type propsType = {};
 
@@ -23,28 +24,31 @@ export const LoginForm: React.FC<propsType> = (props) => {
     pass: "",
   };
 
+  const validationSchema = Yup.object({
+    login: Yup.string().required("Required"),
+    pass: Yup.string().required("Required"),
+  });
+
   const onSubmit: onSubmitType = (values, onSubmitProps): void => {
     onSubmitProps.setSubmitting(true);
     dispatch(loginThunk(values.login, values.pass, onSubmitProps));
   };
 
   return (
-    <Formik initialValues={initialValues} onSubmit={onSubmit}>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      validationSchema={validationSchema}
+    >
       {(formik) => {
         return (
           <Form id="authorization" name="authorization">
-            <div>
-              <h1 />
-              Name
-            </div>
+            <div>Name</div>
             <div>
               <Field type="text" id="login" name="login" />
               <ErrorMessage name="login" component={textError} />
             </div>
-            <div>
-              <h1 />
-              Password
-            </div>
+            <div>Password</div>
             <div>
               <Field type="password" id="pass" name="pass" />
               <ErrorMessage name="pass" component={textError} />

@@ -1,11 +1,11 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import textError from "../../common/textError";
+import * as yup from "yup";
+import { getRegistrationSuccess } from "../../redux/selectors";
 import { actions, Registration } from "../../redux/profile-Reducer";
-import { getRedirect } from "../../redux/selectors";
 
 type propsType = {};
 
@@ -21,7 +21,15 @@ type onSubmitType = (
 ) => void;
 
 export const Reg: React.FC<propsType> = (props) => {
-  const dispathc = useDispatch();
+  const registrationSuccess = useSelector(getRegistrationSuccess);
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  if (registrationSuccess) {
+    dispatch(actions.regOff);
+    history.push("/login");
+  }
+
   const initialValues = {
     login: "",
     email: "",
@@ -29,6 +37,13 @@ export const Reg: React.FC<propsType> = (props) => {
     repeatPass: "",
     phone: "",
   };
+
+  const validationSchema = yup.object({
+    login: yup.string().required("Required"),
+    email: yup.string().required("Required"),
+    pass: yup.string().required("Required"),
+    repeatPass: yup.string().required("Required"),
+  });
 
   const onSubmit: onSubmitType = (values, onSubmitProps) => {
     onSubmitProps.setSubmitting(true);
@@ -39,25 +54,18 @@ export const Reg: React.FC<propsType> = (props) => {
       });
       onSubmitProps.setSubmitting(false);
     } else {
-      dispathc(
-        Registration(
-          values.login,
-          values.email,
-          values.pass,
-          onSubmitProps,
-          values.phone
-        )
+      dispatch(
+        Registration(values.login, values.email, values.pass, values.phone)
       );
     }
   };
-  const redirect = useSelector(getRedirect);
-  if (redirect) {
-    dispathc(actions.RedirectOFF());
-    return <Redirect to="/login" />;
-  }
 
   return (
-    <Formik initialValues={initialValues} onSubmit={onSubmit}>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      validationSchema={validationSchema}
+    >
       {(formik) => {
         return (
           <Form id="reg" name="reg">

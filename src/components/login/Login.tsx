@@ -4,16 +4,16 @@ import { LoginForm } from "./LoginForm";
 import { loginThunk } from "../../redux/profile-Reducer";
 import { connect, useSelector } from "react-redux";
 import { profileActionType } from "../../redux/profile-Reducer";
-import { Redirect } from "react-router";
+import { Redirect, useHistory } from "react-router";
 import { getAuth } from "../../redux/selectors";
 
 type propsType = {};
 
 const Login: React.FC<propsType> = (props) => {
   const auth = useSelector(getAuth);
-
+  const history = useHistory();
   if (auth) {
-    return <Redirect to="/" />;
+    history.push("/");
   }
   return (
     <div>

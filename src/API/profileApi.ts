@@ -1,4 +1,3 @@
-import { string } from "joi";
 import { user } from "../redux/profile-Reducer";
 import { BaseResponseType, instance } from "./api";
 

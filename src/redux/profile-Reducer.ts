@@ -10,12 +10,13 @@ export type user = {
 };
 
 let initState = {
+  initApp: false,
   login: "",
   email: "",
   auth: false,
-  redirect: false,
   findByEmail: null as user | null,
   findByName: null as user[] | null,
+  registrationSuccess: false,
 };
 
 type initStateProfileType = typeof initState;
@@ -41,18 +42,6 @@ const ProfileReducer = (
         auth: false,
       };
     }
-    case "profile/REDIRECTON": {
-      return {
-        ...state,
-        redirect: true,
-      };
-    }
-    case "profile/REDIRECTOFF": {
-      return {
-        ...state,
-        redirect: false,
-      };
-    }
     case "profile/setFindByEmail": {
       return {
         ...state,
@@ -63,6 +52,24 @@ const ProfileReducer = (
       return {
         ...state,
         findByName: action.array,
+      };
+    }
+    case "profile/setInit": {
+      return {
+        ...state,
+        initApp: true,
+      };
+    }
+    case "profile/reg": {
+      return {
+        ...state,
+        registrationSuccess: true,
+      };
+    }
+    case "profile/regOff": {
+      return {
+        ...state,
+        registrationSuccess: false,
       };
     }
     default:
@@ -83,14 +90,6 @@ export const actions = {
     ({
       type: "profile/LOGOUT",
     } as const),
-  RedirectOn: () =>
-    ({
-      type: "profile/REDIRECTON",
-    } as const),
-  RedirectOFF: () =>
-    ({
-      type: "profile/REDIRECTOFF",
-    } as const),
   setFindByEmail: (user: user) =>
     ({
       type: "profile/setFindByEmail",
@@ -100,6 +99,18 @@ export const actions = {
     ({
       type: "profile/setFindByName",
       array: array,
+    } as const),
+  init: () =>
+    ({
+      type: "profile/setInit",
+    } as const),
+  reg: () =>
+    ({
+      type: "profile/reg",
+    } as const),
+  regOff: () =>
+    ({
+      type: "profile/regOff",
     } as const),
 };
 
@@ -111,12 +122,12 @@ export const loginThunk =
   ): ThunkType<profileActionType> =>
   async (dispatch) => {
     let response = await authApi.login(login, pass);
+    console.log(onSubmitProps);
+    onSubmitProps.setSubmitting(false);
     if (response.resultCode === ResultCodeEnum.success) {
-      onSubmitProps.setSubmitting(false);
       dispatch(actions.SetProfileData(response.d.login, response.d.email));
     }
     if (response.resultCode === ResultCodeEnum.error) {
-      onSubmitProps.setSubmitting(false);
       onSubmitProps.setErrors({
         login: "login or password is wrong",
         pass: "login or password is wrong",
@@ -135,24 +146,11 @@ export const logoutThunk =
 export const getWhoAmI =
   (): ThunkType<profileActionType> => async (dispatch) => {
     let response = await profileApi.getWhoAmI();
+    if (response) {
+      dispatch(actions.init());
+    }
     if (response.resultCode === ResultCodeEnum.success) {
       dispatch(actions.SetProfileData(response.d.login, response.d.email));
-    }
-  };
-
-export const Registration =
-  (
-    login: string,
-    email: string,
-    pass: string,
-    onSubmitProps: any,
-    phone?: string
-  ): ThunkType<profileActionType> =>
-  async (dispatch) => {
-    let response = await authApi.reg(login, email, pass, phone);
-    onSubmitProps.setSubmitting(false);
-    if (response.resultCode === ResultCodeEnum.success) {
-      dispatch(actions.RedirectOn());
     }
   };
 
@@ -180,6 +178,20 @@ export const findUserByName =
       const user = response.d.user;
       console.log(user);
       dispatch(actions.setFindByName(user));
+    }
+  };
+
+export const Registration =
+  (
+    name: string,
+    email: string,
+    pass: string,
+    phoneNumber?: string
+  ): ThunkType<profileActionType> =>
+  async (dispatch) => {
+    let response = await authApi.reg(name, email, pass, phoneNumber);
+    if (response.resultCode === ResultCodeEnum.success) {
+      dispatch(actions.reg());
     }
   };
 export default ProfileReducer;

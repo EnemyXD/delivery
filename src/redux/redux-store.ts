@@ -1,9 +1,11 @@
 import { Action, applyMiddleware, combineReducers, createStore } from "redux";
 import ProfileReducer from "./profile-Reducer";
 import thunkMiddleware, { ThunkAction } from "redux-thunk";
+import { AdvertisementReducer } from "./advertisement-Reducer";
 
 let reducers = combineReducers({
   profilePage: ProfileReducer,
+  advertisement: AdvertisementReducer,
 });
 
 type PropertyType<T> = T extends { [key: string]: infer U } ? U : never;
